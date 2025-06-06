@@ -6,7 +6,10 @@ import hashlib
 
 class Authenticator:
     def __init__(self, passwd):
-        self.cipher = Cipher(passwd.ljust(24, "0")[:24])
+        if len(passwd) <= 8:
+            self.cipher = Cipher(passwd.ljust(8, "0"))
+        else:
+            self.cipher = Cipher(passwd.ljust(24, "0")[:24])
 
     def build(self, token, user_id, stb_id, ip, mac):
         plain_text = '$'.join([str(randint(0, 1e7)).rjust(8, "0"), token, user_id, stb_id, ip, mac, '', 'CTC'])
