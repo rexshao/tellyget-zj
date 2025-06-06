@@ -1,4 +1,4 @@
-from Crypto.Cipher import DES3
+from Crypto.Cipher import DES3, DES
 from Crypto.Util.Padding import pad, unpad
 
 class Cipher:
