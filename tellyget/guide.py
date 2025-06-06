@@ -89,7 +89,7 @@ class Guide:
         channel_infos = {}
         for i in range(3):
             response = self.auth.session.get(self.auth.base_url + '/EPG/jsp/gdhdpublic/Ver.3/common/data.jsp?Action=channelListAll')
-            data = json.parse(response.text)
+            data = json.loads(response.text)
             lst = data['result']
             for info in lst:
                 channel_infos[info['channelID']] = info
@@ -164,7 +164,7 @@ class Guide:
                     try:
                         response = self.auth.session.get(self.auth.base_url + '/EPG/jsp/gdhdpublic/Ver.3/common/data.jsp',
                                                          params=params)
-                        data = json.parse(response.text)
+                        data = json.loads(response.text)
                         result = data["result"]
                         if isinstance(result, list):
                             for item in data['result']:
