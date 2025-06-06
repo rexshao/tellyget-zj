@@ -100,10 +100,11 @@ class Guide:
 
         content = '#EXTM3U\n'
         for channel in channels:
+            channel_name = channel['ChannelName']
             channel_id = int(channel['ChannelID'])
-            item = f"#EXTINF:-1 tvg-id=\"{channel_id}\","
+            item = f'#EXTINF:-1 tvg-id="{channel_id}",tvg-name="{channel_name}",'
             if channel_id in channel_infos.keys():
-                item += f"tvg-logo=\"{channel_infos[channel_id]}\","
+                item += f'tvg-logo="{channel_infos[channel_id]}",'
             if channel['TimeShift'] == "1":
                 match = re.search(r'(rtsp|http)://[^\|]+smil', channel["TimeShiftURL"])
                 if match:
@@ -112,7 +113,7 @@ class Guide:
                              )
                 else:
                     item += 'catchup="append",catchup-source="?playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}",'
-            item += f"{channel['ChannelName']}\n"
+            item += f"{channel_name}\n"
             full_url = channel['ChannelURL']
             channel_url = None
             if self.args.igmpProxy != "" and "igmp://" in full_url:
@@ -144,7 +145,7 @@ class Guide:
 
     def save_guide_info(self, channels):
         path = os.path.abspath(self.args.output+"/epg.xml")
-        today = datetime.now()
+        start_day = datetime.now() - timedelta(days=7)
         root = ET.Element('tv', {
             'generator-info-name': '浙江电信'
         })
@@ -160,14 +161,11 @@ class Guide:
             display_name.set('lang', 'zh')
             display_name.text = channel_name
 
-            for i in range(9):
-                if i == 8 and today.hour < 21:
-                    # 21点之后才可以获取第二天数据
-                    break
+            for i in range(10):
                 if i < 7 and channel["TimeShift"] == "0":
                     # 不能时移的频道只有预告
                     continue
-                params["date"] = (today - timedelta(days=7-i)).strftime('%Y%m%d')
+                params["date"] = (start_day + timedelta(days=i)).strftime('%Y%m%d')
                 for j in range(3):
                     try:
                         response = self.auth.session.get(self.auth.base_url + '/EPG/jsp/gdhdpublic/Ver.3/common/data.jsp',
