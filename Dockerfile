@@ -1,7 +1,6 @@
 FROM python:3.9-slim
 RUN mkdir /app
-COPY ./requirements.txt /app/requirements.txt
-COPY ./docker.sh /app/docker.sh
+COPY ./* /app/
 WORKDIR /app
 RUN echo "deb https://mirrors.tencent.com/debian/ bookworm main non-free non-free-firmware contrib" > /etc/apt/sources.list
 
