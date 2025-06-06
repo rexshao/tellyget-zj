@@ -88,19 +88,23 @@ class Guide:
     def get_playlist(self, channels):
         channel_infos = {}
         for i in range(3):
-            response = self.auth.session.get(self.auth.base_url + '/EPG/jsp/gdhdpublic/Ver.3/common/data.jsp?Action=channelListAll')
-            data = json.loads(response.text)
-            lst = data['result']
-            for info in lst:
-                channel_infos[info['channelID']] = info
-            pass
+            try:
+                response = self.auth.session.get(self.auth.base_url + '/EPG/jsp/gdhdpublic/Ver.3/common/data.jsp?Action=channelListAll')
+                print(response.text)
+                data = json.loads(response.text)
+                lst = data['result']
+                for info in lst:
+                    channel_infos[info['channelID']] = info["pic"]
+                break
+            except Exception:
+                time.sleep(2)
+
         content = '#EXTM3U\n'
         for channel in channels:
             channel_id = channel['ChannelID']
             item = f"#EXTINF:-1 tvg-id=\"{channel_id}\","
-            if channel_id in channel_infos:
-                info = channel_infos[channel_id]
-                item += f"tvg-logo=\"{info['pic']}\","
+            if  channel_id in channel_infos.keys():
+                item += f"tvg-logo=\"{channel_infos[channel_id]}\","
             if channel['TimeShift'] == "1":
                 item += ('catchup="default",catchup-source="%s&playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}",'
                          % channel["TimeShiftURL"]
