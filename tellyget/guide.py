@@ -90,7 +90,6 @@ class Guide:
         for i in range(3):
             try:
                 response = self.auth.session.get(self.auth.base_url + '/EPG/jsp/gdhdpublic/Ver.3/common/data.jsp?Action=channelListAll')
-                print(response.text)
                 data = json.loads(response.text)
                 lst = data['result']
                 for info in lst:
@@ -101,9 +100,9 @@ class Guide:
 
         content = '#EXTM3U\n'
         for channel in channels:
-            channel_id = channel['ChannelID']
+            channel_id = int(channel['ChannelID'])
             item = f"#EXTINF:-1 tvg-id=\"{channel_id}\","
-            if  channel_id in channel_infos.keys():
+            if channel_id in channel_infos.keys():
                 item += f"tvg-logo=\"{channel_infos[channel_id]}\","
             if channel['TimeShift'] == "1":
                 item += ('catchup="default",catchup-source="%s&playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}",'
