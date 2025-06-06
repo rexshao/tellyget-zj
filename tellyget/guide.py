@@ -105,9 +105,13 @@ class Guide:
             if channel_id in channel_infos.keys():
                 item += f"tvg-logo=\"{channel_infos[channel_id]}\","
             if channel['TimeShift'] == "1":
-                item += ('catchup="default",catchup-source="%s&playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}",'
-                         % channel["TimeShiftURL"]
-                         )
+                match = re.search(r'(rtsp|http)://[^\|]+smil', channel["TimeShiftURL"])
+                if match:
+                    item += ('catchup="default",catchup-source="%s?playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}",'
+                             % match.group(0)
+                             )
+                else:
+                    item += 'catchup="append",catchup-source="?playseek=${(b)yyyyMMddHHmmss}-${(e)yyyyMMddHHmmss}",'
             item += f"{channel['ChannelName']}\n"
             full_url = channel['ChannelURL']
             channel_url = None
@@ -116,7 +120,7 @@ class Guide:
                 if match:
                     channel_url = self.args.igmpProxy + match.group(1)
             if channel_url is None:
-                match = re.search(r'rtsp://[^\|]+', full_url)
+                match = re.search(r'(rtsp|http)://[^\|]+smil', full_url)
                 if match:
                     channel_url = match.group(0)
             if channel_url:
