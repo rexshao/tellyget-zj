@@ -107,6 +107,7 @@ class Guide:
                          )
             item += f"{channel['ChannelName']}\n"
             full_url = channel['ChannelURL']
+            channel_url = None
             if self.args.igmpProxy != "" and "igmp://" in full_url:
                 match = re.search(r'igmp://([\d\.\:]+)', full_url)
                 if match:
