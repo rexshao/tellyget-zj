@@ -4,13 +4,13 @@ from Crypto.Util.Padding import pad, unpad
 class Cipher:
     def __init__(self, key):
         if len(key) == 8 or (key[:8] == key[8:16] and key[-8:] == key[8:16]):
-            self.cipher = DES.new(key[:8], DES.MODE_ECB)
+            self.cipher = DES.new(key[:8].encode(), DES.MODE_ECB)
         elif key[:8] == key[8:16]:
-            self.cipher = DES3.new(key[8:], DES3.MODE_ECB)
+            self.cipher = DES3.new(key[8:].encode(), DES3.MODE_ECB)
         elif key[-8:] == key[8:16]:
-            self.cipher = DES3.new(key[:-8], DES3.MODE_ECB)
+            self.cipher = DES3.new(key[:-8].encode(), DES3.MODE_ECB)
         else:
-            self.cipher = DES3.new(key, DES3.MODE_ECB)
+            self.cipher = DES3.new(key.encode(), DES3.MODE_ECB)
 
     def encrypt(self, plain_text):
         cipher_text = self.cipher.encrypt(pad(plain_text.encode(), DES3.block_size))
