@@ -2,10 +2,29 @@ import re
 import requests
 import socket
 import time
+from requests.adapters import HTTPAdapter
 from requests_toolbelt.adapters import socket_options
 from urllib.parse import urlunparse, urlparse
 
 from tellyget.utils.authenticator import Authenticator
+
+
+def check_ip(ip_addr):
+    compile_ip = re.compile('^(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|[1-9])\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)\.(1\d{2}|2[0-4]\d|25[0-5]|[1-9]\d|\d)$')
+    if compile_ip.match(ip_addr):
+        return True
+    else:
+        return False
+
+
+class SourceIPHTTPAdapter(HTTPAdapter):
+    def __init__(self, source_ip, *args, **kwargs):
+        self.source_ip = source_ip
+        super().__init__(*args, **kwargs)
+
+    def init_poolmanager(self, *args, **kwargs):
+        kwargs['source_address'] = (self.source_ip, 0)  # 绑定到源IP并自动分配端口
+        return super().init_poolmanager(*args, **kwargs)
 
 
 class Auth:
@@ -25,9 +44,12 @@ class Auth:
     def get_session(self):
         session = requests.Session()
         if self.args.interface is not None:
-            options = [(socket.SOL_SOCKET, socket.SO_BINDTODEVICE, self.args.interface.encode())]
-            adapter = socket_options.SocketOptionsAdapter(socket_options=options)
-            session.mount("http://", adapter)
+            if check_ip(check_ip):
+                session.mount("http://", SourceIPHTTPAdapter(source_ip=self.args.interface))
+            else:
+                options = [(socket.SOL_SOCKET, socket.SO_BINDTODEVICE, self.args.interface.encode())]
+                adapter = socket_options.SocketOptionsAdapter(socket_options=options)
+                session.mount("http://", adapter)
         session.headers = {
             'User-Agent': 'webkit;Resolution(PAL,720P,1080P)',
             'X-Requested-With': 'com.android.smart.terminal.iptv',
