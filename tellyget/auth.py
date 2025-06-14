@@ -44,7 +44,7 @@ class Auth:
     def get_session(self):
         session = requests.Session()
         if self.args.interface is not None:
-            if check_ip(check_ip):
+            if check_ip(self.args.interface):
                 session.mount("http://", SourceIPHTTPAdapter(source_ip=self.args.interface))
             else:
                 options = [(socket.SOL_SOCKET, socket.SO_BINDTODEVICE, self.args.interface.encode())]
