@@ -23,9 +23,9 @@ def get_ch_group(ch_name, ch_id):
         return GROUP_MATCH[ch_id]
     if '中央' in ch_name or 'CCTV' in ch_name or 'CGTN' in ch_name:
         return "央视"
-    if '浙江' in ch_name or '钱江' in ch_name or '民生' in ch_name or '之江' in ch_name:
+    if '浙江' in ch_name or '钱江' in ch_name or '民生' in ch_name or '之江' in ch_name or '科教影视' in ch_name:
         return "浙江"
-    if '卫视' in ch_name:
+    if '卫视' in ch_name or '凤凰' in ch_name or '黑龙江' in ch_name:
         return "卫视"
 
 
