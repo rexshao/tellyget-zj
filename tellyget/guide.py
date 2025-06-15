@@ -129,7 +129,7 @@ class Guide:
             item = f'#EXTINF:-1 tvg-id="{channel_id}",tvg-name="{channel_name}",'
             ch_group = get_ch_group(channel_name, channel_id)
             if ch_group:
-                item += f'group-title = "{ch_group}",'
+                item += f'group-title="{ch_group}",'
             if channel_id in channel_infos.keys():
                 item += f'tvg-logo="{channel_infos[channel_id]}",'
             if channel['TimeShift'] == "1":
