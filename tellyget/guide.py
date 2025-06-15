@@ -18,21 +18,21 @@ GROUP_MATCH = {
 }
 
 
+def get_ch_group(ch_name, ch_id):
+    if ch_id in GROUP_MATCH:
+        return GROUP_MATCH[ch_id]
+    if '中央' in ch_name or 'CCTV' in ch_name or 'CGTN' in ch_name:
+        return "央视"
+    if '浙江' in ch_name or '钱江' in ch_name or '民生' in ch_name or '之江' in ch_name:
+        return "浙江"
+    if '卫视' in ch_name:
+        return "卫视"
+
+
 class Guide:
     def __init__(self, args, auth):
         self.args = args
         self.auth = auth
-
-    @staticmethod
-    def get_ch_group(ch_name, ch_id):
-        if ch_id in GROUP_MATCH:
-            return GROUP_MATCH[ch_id]
-        if '中央' in ch_name or 'CCTV' in ch_name or 'CGTN' in ch_name:
-            return "央视"
-        if '浙江' in ch_name or '钱江' in ch_name or '民生' in ch_name or '之江' in ch_name:
-            return "浙江"
-        if '卫视' in ch_name:
-            return "卫视"
 
     def save(self):
         channels = self.get_channels()
@@ -127,7 +127,7 @@ class Guide:
             channel_name = channel['ChannelName']
             channel_id = int(channel['ChannelID'])
             item = f'#EXTINF:-1 tvg-id="{channel_id}",tvg-name="{channel_name}",'
-            ch_group = self.get_ch_group(channel_name, channel_id)
+            ch_group = get_ch_group(channel_name, channel_id)
             if ch_group:
                 item += f'group-title = "{ch_group}",'
             if channel_id in channel_infos.keys():
